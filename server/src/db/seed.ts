@@ -1,0 +1,810 @@
+import bcrypt from 'bcryptjs';
+import { db, DatabaseSchema } from './db.js';
+
+export async function seedDatabase() {
+  console.log('Seeding MedScan AI database with fictional demo data...');
+
+  const passwordHash = await bcrypt.hash('Demo@12345', 10);
+  const adminPasswordHash = await bcrypt.hash('Admin@12345', 10);
+
+  const demoUserId = 'usr-demo-sarah-jenkins-01';
+  const robertUserId = 'usr-demo-robert-chen-02';
+  const mariaUserId = 'usr-demo-maria-rodriguez-03';
+  const adminUserId = 'usr-admin-01';
+
+  const seededData: DatabaseSchema = {
+    users: [
+      {
+        id: demoUserId,
+        email: 'demo@medscan.ai',
+        password_hash: passwordHash,
+        role: 'patient',
+        created_at: '2026-08-01T09:00:00Z'
+      },
+      {
+        id: robertUserId,
+        email: 'robert.chen@fictionalmail.com',
+        password_hash: passwordHash,
+        role: 'patient',
+        created_at: '2026-08-10T10:00:00Z'
+      },
+      {
+        id: mariaUserId,
+        email: 'maria.rodriguez@fictionalmail.com',
+        password_hash: passwordHash,
+        role: 'patient',
+        created_at: '2026-08-15T11:00:00Z'
+      },
+      {
+        id: adminUserId,
+        email: 'admin@medscan.ai',
+        password_hash: adminPasswordHash,
+        role: 'admin',
+        created_at: '2026-07-01T08:00:00Z'
+      }
+    ],
+
+    profiles: [
+      {
+        user_id: demoUserId,
+        name: 'Sarah Jenkins',
+        date_of_birth: '1988-04-12',
+        age: 38,
+        gender: 'Female',
+        blood_group: 'A+',
+        allergies: ['Penicillin', 'Peanuts (Mild)'],
+        existing_conditions: ['Mild Seasonal Allergies', 'History of Vitamin D Deficiency'],
+        medications: ['Vitamin D3 2000 IU daily', 'Cetirizine 10mg as needed'],
+        emergency_contact: {
+          name: 'David Jenkins',
+          relationship: 'Spouse',
+          phone: '+1 (555) 234-8901'
+        },
+        privacy_settings: {
+          share_with_research: false,
+          store_history: true
+        },
+        updated_at: '2026-09-15T14:30:00Z'
+      },
+      {
+        user_id: robertUserId,
+        name: 'Robert Chen',
+        date_of_birth: '1972-11-03',
+        age: 54,
+        gender: 'Male',
+        blood_group: 'O+',
+        allergies: ['Sulfa drugs'],
+        existing_conditions: ['Primary Hypertension', 'Borderline Hyperlipidemia'],
+        medications: ['Amlodipine 5mg daily', 'Atorvastatin 10mg daily'],
+        emergency_contact: {
+          name: 'Linda Chen',
+          relationship: 'Spouse',
+          phone: '+1 (555) 987-6543'
+        },
+        privacy_settings: {
+          share_with_research: false,
+          store_history: true
+        },
+        updated_at: '2026-09-10T11:00:00Z'
+      },
+      {
+        user_id: mariaUserId,
+        name: 'Maria Rodriguez',
+        date_of_birth: '1997-06-21',
+        age: 29,
+        gender: 'Female',
+        blood_group: 'B+',
+        allergies: ['None known'],
+        existing_conditions: ['Migraine with aura (infrequent)'],
+        medications: ['Multivitamin', 'Sumatriptan as needed'],
+        emergency_contact: {
+          name: 'Elena Rodriguez',
+          relationship: 'Sister',
+          phone: '+1 (555) 456-7890'
+        },
+        privacy_settings: {
+          share_with_research: false,
+          store_history: true
+        },
+        updated_at: '2026-09-08T09:15:00Z'
+      }
+    ],
+
+    symptomAssessments: [
+      {
+        id: 'symp-demo-01',
+        user_id: demoUserId,
+        symptoms: ['Mild Tension Headache', 'Afternoon Fatigue', 'Mild Eye Strain'],
+        context: {
+          age_range: '30-45',
+          duration: '3 days',
+          severity: 4,
+          onset: 'Gradual onset after long screen hours',
+          existing_conditions: ['Mild Seasonal Allergies'],
+          medications: ['Vitamin D3']
+        },
+        symptom_summary: 'Reported symptoms: Mild tension headache, afternoon fatigue, and eye strain occurring over the past 3 days with gradual onset.',
+        urgency: 'routine',
+        red_flags_detected: [],
+        possible_conditions: [
+          {
+            condition_name: 'Tension-Type Headache & Digital Eye Strain',
+            simple_explanation: 'A very common type of mild headache often brought on by muscular tightness in the neck, prolonged screen usage, stress, or insufficient hydration.',
+            why_associated: 'Correlates directly with afternoon onset, screen exposure, and mild dull discomfort without nausea or aura.',
+            common_additional_symptoms: ['Shoulder or neck stiffness', 'Difficulty concentrating', 'Sensitivity to bright light'],
+            when_to_seek_care: 'If the headache becomes sudden and intensely severe ("thunderclap"), is accompanied by fever, stiff neck, or changes in vision.'
+          },
+          {
+            condition_name: 'Mild Dehydration or Sleep Deficit',
+            simple_explanation: 'Lower fluid intake or irregular sleep can diminish energy levels and manifest as daytime fatigue and headache.',
+            why_associated: 'Aligned with fatigue and mild headache without signs of systemic infection.',
+            common_additional_symptoms: ['Dry mouth', 'Lightheadedness upon standing quickly', 'Darker urine'],
+            when_to_seek_care: 'If fatigue is chronic, unremitting, or accompanied by unexplained weight changes.'
+          }
+        ],
+        recommendations: [
+          'Maintain regular hydration throughout work hours (aim for 2–2.5 liters of water daily).',
+          'Practice the 20-20-20 rule for digital screens (every 20 minutes, look at an object 20 feet away for 20 seconds).',
+          'Prioritize consistent sleep schedules (7–8 hours per night).',
+          'Schedule an appointment with a primary healthcare professional if symptoms persist beyond one week.'
+        ],
+        disclaimer: 'This information is educational and does not constitute a medical diagnosis. A qualified healthcare professional should evaluate your symptoms.',
+        created_at: '2026-09-14T15:20:00Z'
+      }
+    ],
+
+    dailyHealthReports: [
+      {
+        id: 'dhr-demo-01',
+        user_id: demoUserId,
+        date: '2026-09-16',
+        energy_level: 4,
+        sleep_hours: 7.5,
+        sleep_quality: 'Good',
+        water_intake_liters: 2.2,
+        exercise_minutes: 30,
+        mood: 'Energetic and focused',
+        symptoms_reported: [],
+        vitals: {
+          temperature_f: 98.4,
+          bp_systolic: 118,
+          bp_diastolic: 76,
+          blood_glucose_mgdl: 92,
+          resting_heart_rate: 68
+        },
+        ai_summary: 'Your reported health information for today appears stable and well-balanced. Sleep duration is within optimal restorative guidelines, and vitals fall within standard resting benchmarks.',
+        ai_changes: [
+          'Sleep increased by 1.0 hour compared to yesterday.',
+          'Water intake increased by 0.6 liters.',
+          'Previous headache and fatigue symptoms resolved.'
+        ],
+        ai_recommendations: [
+          'Continue current hydration and consistent sleep bedtime.',
+          'Keep tracking daily vitals to observe long-term trends.'
+        ],
+        created_at: '2026-09-16T08:30:00Z'
+      },
+      {
+        id: 'dhr-demo-02',
+        user_id: demoUserId,
+        date: '2026-09-15',
+        energy_level: 3,
+        sleep_hours: 6.5,
+        sleep_quality: 'Fair',
+        water_intake_liters: 1.6,
+        exercise_minutes: 15,
+        mood: 'Slightly fatigued',
+        symptoms_reported: ['Mild afternoon headache'],
+        vitals: {
+          temperature_f: 98.6,
+          bp_systolic: 120,
+          bp_diastolic: 78,
+          blood_glucose_mgdl: 96,
+          resting_heart_rate: 72
+        },
+        ai_summary: 'Your reported entries indicate mild fatigue and a slight reduction in sleep and hydration compared to baseline. Vitals remain within expected normal ranges.',
+        ai_changes: [
+          'Sleep was lower than target (6.5 hours).',
+          'Water intake was below the recommended 2.0L threshold.'
+        ],
+        ai_recommendations: [
+          'Ensure adequate fluid intake during the afternoon.',
+          'Consider an earlier bedtime to restore energy reserves.'
+        ],
+        created_at: '2026-09-15T09:00:00Z'
+      },
+      {
+        id: 'dhr-demo-03',
+        user_id: demoUserId,
+        date: '2026-09-14',
+        energy_level: 2,
+        sleep_hours: 6.0,
+        sleep_quality: 'Restless',
+        water_intake_liters: 1.4,
+        exercise_minutes: 0,
+        mood: 'Stressed',
+        symptoms_reported: ['Tension headache', 'Eye fatigue'],
+        vitals: {
+          temperature_f: 98.7,
+          bp_systolic: 124,
+          bp_diastolic: 80,
+          blood_glucose_mgdl: 99,
+          resting_heart_rate: 76
+        },
+        ai_summary: 'Report indicates higher stress, lower sleep duration, and presence of mild headache symptoms.',
+        ai_changes: [
+          'Headache and eye strain reported.',
+          'Physical activity was skipped.'
+        ],
+        ai_recommendations: [
+          'Take screen breaks and practice gentle neck stretches.',
+          'Monitor headache progression.'
+        ],
+        created_at: '2026-09-14T08:45:00Z'
+      }
+    ],
+
+    labReports: [
+      {
+        id: 'lab-demo-01',
+        user_id: demoUserId,
+        lab_name: 'Metro Health Diagnostic Center',
+        report_type: 'Comprehensive Metabolic & Lipid Profile',
+        report_date: '2026-09-10',
+        file_name: 'metro_health_panel_sept2026.pdf',
+        file_url: '/uploads/sample_lab_report_01.pdf',
+        ocr_confidence: 97.5,
+        is_low_confidence: false,
+        overall_summary: 'Analysis completed across 8 key markers. Most metabolic and organ function markers are within expected laboratory reference ranges. Total Cholesterol and Vitamin D show values outside the reference ranges noted on this report, suitable for clinical review.',
+        results: [
+          {
+            id: 'res-01',
+            lab_report_id: 'lab-demo-01',
+            test_name: 'Fasting Blood Glucose',
+            result_value: '94',
+            unit: 'mg/dL',
+            reference_range: '70 - 99 mg/dL',
+            status: 'within_range',
+            test_explanation: 'Measures the concentration of glucose (sugar) circulating in the bloodstream after an overnight fast.',
+            general_interpretation: 'Your reported value is within the standard reference range shown on this report.',
+            possible_reasons: ['Normal carbohydrate metabolism and pancreatic insulin regulation.'],
+            suggested_next_step: 'Continue balanced nutrition and routine periodic monitoring.'
+          },
+          {
+            id: 'res-02',
+            lab_report_id: 'lab-demo-01',
+            test_name: 'Total Cholesterol',
+            result_value: '215',
+            unit: 'mg/dL',
+            reference_range: '< 200 mg/dL',
+            status: 'review',
+            test_explanation: 'Measures the total quantity of cholesterol particles circulating in the bloodstream.',
+            general_interpretation: 'Your reported value is moderately above the reference range shown on this report.',
+            possible_reasons: [
+              'Dietary factors, genetic predisposition, lifestyle activity levels, or recent metabolic changes.',
+              'Total cholesterol is evaluated in conjunction with HDL, LDL, and triglyceride fractions.'
+            ],
+            suggested_next_step: 'Consider discussing this result with your healthcare provider alongside your HDL and LDL lipid fractions to evaluate cardiovascular context.'
+          },
+          {
+            id: 'res-03',
+            lab_report_id: 'lab-demo-01',
+            test_name: 'HDL Cholesterol ("Good")',
+            result_value: '58',
+            unit: 'mg/dL',
+            reference_range: '> 50 mg/dL (Female)',
+            status: 'within_range',
+            test_explanation: 'High-Density Lipoprotein carries cholesterol away from arteries back to the liver for excretion.',
+            general_interpretation: 'Your reported value is within the protective reference range indicated on this report.',
+            possible_reasons: ['Regular physical activity, beneficial dietary fats, and favorable lipid clearance.'],
+            suggested_next_step: 'Maintain regular cardiovascular exercise.'
+          },
+          {
+            id: 'res-04',
+            lab_report_id: 'lab-demo-01',
+            test_name: 'LDL Cholesterol ("Direct")',
+            result_value: '132',
+            unit: 'mg/dL',
+            reference_range: '< 100 mg/dL',
+            status: 'review',
+            test_explanation: 'Low-Density Lipoprotein transports cholesterol to tissues and can contribute to arterial plaque accumulation when elevated over extended time.',
+            general_interpretation: 'Your reported value is outside the reference range printed on this report.',
+            possible_reasons: [
+              'Intake of saturated fats, metabolic regulation, family history, or physical activity balance.'
+            ],
+            suggested_next_step: 'Review this value with your physician to discuss dietary adjustments or lifestyle optimizations.'
+          },
+          {
+            id: 'res-05',
+            lab_report_id: 'lab-demo-01',
+            test_name: 'Serum Creatinine',
+            result_value: '0.85',
+            unit: 'mg/dL',
+            reference_range: '0.59 - 1.04 mg/dL',
+            status: 'within_range',
+            test_explanation: 'A normal waste product of muscle breakdown filtered and eliminated by the kidneys.',
+            general_interpretation: 'Your reported value is within the reference range shown on this report.',
+            possible_reasons: ['Adequate kidney filtration and typical muscle metabolism.'],
+            suggested_next_step: 'No specific action required.'
+          },
+          {
+            id: 'res-06',
+            lab_report_id: 'lab-demo-01',
+            test_name: '25-Hydroxy Vitamin D',
+            result_value: '22.4',
+            unit: 'ng/mL',
+            reference_range: '30.0 - 100.0 ng/mL',
+            status: 'review',
+            test_explanation: 'Essential fat-soluble vitamin crucial for bone health, immune function, and calcium absorption.',
+            general_interpretation: 'Your reported value is lower than the reference range shown on this report (indicative of insufficient levels).',
+            possible_reasons: [
+              'Limited direct sun exposure, dietary intake patterns, or absorption differences.'
+            ],
+            suggested_next_step: 'Consider discussing appropriate supplementation dosage and timing with your healthcare professional.'
+          }
+        ],
+        created_at: '2026-09-10T16:00:00Z'
+      },
+      {
+        id: 'lab-demo-02',
+        user_id: demoUserId,
+        lab_name: 'Apex Clinical Laboratories',
+        report_type: 'Complete Blood Count (CBC) with Differential',
+        report_date: '2026-06-18',
+        file_name: 'apex_cbc_june2026.pdf',
+        file_url: '/uploads/sample_lab_report_02.pdf',
+        ocr_confidence: 98.2,
+        is_low_confidence: false,
+        overall_summary: 'All cellular components (RBC, WBC, Platelets, Hemoglobin, Hematocrit) are within verified clinical reference intervals.',
+        results: [
+          {
+            id: 'res-07',
+            lab_report_id: 'lab-demo-02',
+            test_name: 'Hemoglobin',
+            result_value: '13.4',
+            unit: 'g/dL',
+            reference_range: '12.0 - 15.5 g/dL',
+            status: 'within_range',
+            test_explanation: 'The iron-containing protein inside red blood cells responsible for transporting oxygen throughout the body.',
+            general_interpretation: 'Your reported value is comfortably within the reference range shown on this report.',
+            possible_reasons: ['Adequate iron balance and red blood cell production.'],
+            suggested_next_step: 'Maintain healthy iron-rich nutrition.'
+          },
+          {
+            id: 'res-08',
+            lab_report_id: 'lab-demo-02',
+            test_name: 'White Blood Cell Count (WBC)',
+            result_value: '6.8',
+            unit: 'x10^3/uL',
+            reference_range: '4.5 - 11.0 x10^3/uL',
+            status: 'within_range',
+            test_explanation: 'Cells of the immune system that defend against infections and participate in inflammatory responses.',
+            general_interpretation: 'Your reported value is within the standard reference range on this report.',
+            possible_reasons: ['Absence of acute infection or significant inflammatory stress at the time of draw.'],
+            suggested_next_step: 'Routine monitoring as clinically indicated.'
+          },
+          {
+            id: 'res-09',
+            lab_report_id: 'lab-demo-02',
+            test_name: 'Platelets',
+            result_value: '265',
+            unit: 'x10^3/uL',
+            reference_range: '150 - 450 x10^3/uL',
+            status: 'within_range',
+            test_explanation: 'Cell fragments essential for normal blood clotting and vessel repair.',
+            general_interpretation: 'Your reported value is within the reference range on this report.',
+            possible_reasons: ['Normal bone marrow megakaryocyte function.'],
+            suggested_next_step: 'Standard wellness follow-up.'
+          }
+        ],
+        created_at: '2026-06-18T14:10:00Z'
+      }
+    ],
+
+    labResults: [], // Populated automatically inside createLabReport or kept synchronous
+
+    doctors: [
+      {
+        id: 'doc-01',
+        name: 'Dr. Evelyn Vance, MD',
+        specialty: 'Internal Medicine & Primary Care',
+        qualifications: 'MD, FACP, Board Certified in Internal Medicine (Johns Hopkins)',
+        experience_years: 15,
+        hospital_affiliation: 'Metro General Hospital',
+        location: 'Downtown Medical Plaza, Suite 400',
+        city: 'Metropolis',
+        postal_code: '10001',
+        consultation_types: ['in_person', 'telehealth'],
+        languages: ['English', 'Spanish'],
+        available_hours: 'Mon - Thu: 8:00 AM - 4:30 PM',
+        contact_phone: '+1 (555) 342-9901',
+        contact_email: 'dr.vance@metrohealthpartners.org',
+        image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400',
+        rating: 4.8,
+        review_count: 214
+      },
+      {
+        id: 'doc-02',
+        name: 'Dr. Marcus Thorne, MD',
+        specialty: 'Cardiology',
+        qualifications: 'MD, FACC, Fellowship in Cardiovascular Disease (Stanford)',
+        experience_years: 18,
+        hospital_affiliation: 'St. Jude Heart & Vascular Pavilion',
+        location: 'Heart Institute, 750 Health Blvd',
+        city: 'Metropolis',
+        postal_code: '10003',
+        consultation_types: ['in_person', 'telehealth'],
+        languages: ['English'],
+        available_hours: 'Tue - Fri: 9:00 AM - 5:00 PM',
+        contact_phone: '+1 (555) 789-2210',
+        contact_email: 'dr.thorne@heartvascular.org',
+        image_url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400',
+        rating: 4.9,
+        review_count: 187
+      },
+      {
+        id: 'doc-03',
+        name: 'Dr. Priya Patel, MD',
+        specialty: 'Endocrinology & Metabolism',
+        qualifications: 'MD, Board Certified in Endocrinology & Diabetes (Harvard Med)',
+        experience_years: 12,
+        hospital_affiliation: 'University Health System',
+        location: 'Endocrine Center, 300 University Way',
+        city: 'Metropolis',
+        postal_code: '10002',
+        consultation_types: ['in_person', 'telehealth'],
+        languages: ['English', 'Hindi', 'Gujarati'],
+        available_hours: 'Mon, Wed, Fri: 8:30 AM - 3:30 PM',
+        contact_phone: '+1 (555) 432-8877',
+        contact_email: 'dr.patel@endocrinecare.org',
+        image_url: 'https://images.unsplash.com/photo-1594824813501-4475e3a343b6?auto=format&fit=crop&q=80&w=400',
+        rating: 4.7,
+        review_count: 156
+      },
+      {
+        id: 'doc-04',
+        name: 'Dr. Carlos Mendoza, MD',
+        specialty: 'Dermatology',
+        qualifications: 'MD, FAAD, Board Certified Dermatologist',
+        experience_years: 10,
+        hospital_affiliation: 'Lakeside Specialty Clinic',
+        location: 'Skin Health Suite 210, 120 Lakeside Ave',
+        city: 'Metropolis',
+        postal_code: '10004',
+        consultation_types: ['in_person'],
+        languages: ['English', 'Spanish'],
+        available_hours: 'Mon - Fri: 9:00 AM - 4:00 PM',
+        contact_phone: '+1 (555) 654-3211',
+        contact_email: 'contact@lakesidederm.com',
+        image_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=400',
+        rating: 4.6,
+        review_count: 98
+      },
+      {
+        id: 'doc-05',
+        name: 'Dr. Sarah Al-Mansoor, MD',
+        specialty: 'Neurology',
+        qualifications: 'MD, Board Certified in Neurology & Headache Medicine',
+        experience_years: 14,
+        hospital_affiliation: 'Metro Neurosciences Center',
+        location: 'Neurological Tower, 500 Park East',
+        city: 'Metropolis',
+        postal_code: '10001',
+        consultation_types: ['in_person', 'telehealth'],
+        languages: ['English', 'Arabic'],
+        available_hours: 'Mon, Tue, Thu: 9:00 AM - 4:00 PM',
+        contact_phone: '+1 (555) 876-5432',
+        contact_email: 'dr.almansoor@metroneuro.org',
+        image_url: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400',
+        rating: 4.9,
+        review_count: 201
+      },
+      {
+        id: 'doc-06',
+        name: 'Dr. Daniel O\'Connor, MD',
+        specialty: 'Orthopedics & Sports Medicine',
+        qualifications: 'MD, FAAOS, Orthopedic Surgery Fellowship',
+        experience_years: 16,
+        hospital_affiliation: 'Summit Orthopedic Institute',
+        location: 'Summit Sports Clinic, 820 Highland St',
+        city: 'Metropolis',
+        postal_code: '10005',
+        consultation_types: ['in_person'],
+        languages: ['English'],
+        available_hours: 'Wed - Sat: 8:00 AM - 2:00 PM',
+        contact_phone: '+1 (555) 234-9812',
+        contact_email: 'doconnor@summitortho.org',
+        image_url: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400',
+        rating: 4.8,
+        review_count: 143
+      }
+    ],
+
+    hospitals: [
+      {
+        id: 'hosp-01',
+        name: 'Metro General Hospital & Trauma Center',
+        hospital_type: 'Academic Medical Center & Level 1 Trauma Center',
+        address: '500 Medical Center Blvd',
+        city: 'Metropolis',
+        postal_code: '10001',
+        distance_km: 2.4,
+        emergency_services: true,
+        trauma_level: 'Level 1 Trauma Center',
+        specialties: ['24/7 Emergency Department', 'Cardiology', 'Neurology', 'Trauma Surgery', 'Intensive Care Unit (ICU)'],
+        contact_phone: '+1 (555) 911-0000',
+        emergency_phone: '+1 (555) 911-0099',
+        website: 'https://www.metrogeneralhospital.org',
+        directions_url: 'https://maps.google.com/?q=Metro+General+Hospital',
+        rating: 4.9,
+        review_count: 1240
+      },
+      {
+        id: 'hosp-02',
+        name: 'St. Jude Community Hospital',
+        hospital_type: 'Community Hospital',
+        address: '1200 St. Jude Way',
+        city: 'Metropolis',
+        postal_code: '10003',
+        distance_km: 4.8,
+        emergency_services: true,
+        trauma_level: 'Level 3 Emergency Care',
+        specialties: ['24/7 Emergency Department', 'General Surgery', 'Internal Medicine', 'Maternity & Obstetrics'],
+        contact_phone: '+1 (555) 456-1122',
+        emergency_phone: '+1 (555) 456-9911',
+        website: 'https://www.stjudecommunity.org',
+        directions_url: 'https://maps.google.com/?q=St+Jude+Community+Hospital',
+        rating: 4.5,
+        review_count: 684
+      },
+      {
+        id: 'hosp-03',
+        name: 'Children\'s Specialized Medical Center',
+        hospital_type: 'Pediatric Specialty Hospital',
+        address: '320 Rainbow Children\'s Rd',
+        city: 'Metropolis',
+        postal_code: '10002',
+        distance_km: 6.1,
+        emergency_services: true,
+        trauma_level: 'Pediatric Emergency Department',
+        specialties: ['Pediatric Emergency 24/7', 'Neonatal ICU (NICU)', 'Pediatric Surgery', 'Pediatric Oncology'],
+        contact_phone: '+1 (555) 321-4455',
+        emergency_phone: '+1 (555) 321-9911',
+        website: 'https://www.childrenshospitalmetropolis.org',
+        directions_url: 'https://maps.google.com/?q=Childrens+Specialized+Medical+Center',
+        rating: 4.8,
+        review_count: 912
+      },
+      {
+        id: 'hosp-04',
+        name: 'Lakeside Ambulatory & Specialty Surgical Center',
+        hospital_type: 'Specialty Surgical Center',
+        address: '88 Lakeside Drive',
+        city: 'Metropolis',
+        postal_code: '10004',
+        distance_km: 7.5,
+        emergency_services: false,
+        trauma_level: 'Outpatient / Elective Care Only',
+        specialties: ['Outpatient Surgery', 'Endoscopy', 'Orthopedic Procedures', 'Ophthalmology'],
+        contact_phone: '+1 (555) 789-5566',
+        emergency_phone: '',
+        website: 'https://www.lakesidesurgical.com',
+        directions_url: 'https://maps.google.com/?q=Lakeside+Surgical+Center',
+        rating: 4.4,
+        review_count: 337
+      },
+      {
+        id: 'hosp-05',
+        name: 'Valley Cardiac & Vascular Institute',
+        hospital_type: 'Specialty Heart Hospital',
+        address: '410 Heartbeat Lane',
+        city: 'Metropolis',
+        postal_code: '10005',
+        distance_km: 8.9,
+        emergency_services: true,
+        trauma_level: 'Cardiac Emergency & Chest Pain Center',
+        specialties: ['24/7 Cardiac Catheterization', 'Chest Pain Emergency Unit', 'Vascular Surgery', 'Cardiac Rehabilitation'],
+        contact_phone: '+1 (555) 654-7788',
+        emergency_phone: '+1 (555) 654-9911',
+        website: 'https://www.valleyheartcare.org',
+        directions_url: 'https://maps.google.com/?q=Valley+Cardiac+Institute',
+        rating: 4.9,
+        review_count: 1087
+      },
+      {
+        id: 'hosp-06',
+        name: 'Northside Urgent Care & Walk-in Clinic',
+        hospital_type: 'Urgent Care Center',
+        address: '150 North Boulevard',
+        city: 'Metropolis',
+        postal_code: '10006',
+        distance_km: 3.2,
+        emergency_services: false,
+        trauma_level: 'Urgent Care (Non-Life-Threatening)',
+        specialties: ['Minor Injury Care', 'X-Ray Onsite', 'Laceration Repair', 'Flu / COVID Testing'],
+        contact_phone: '+1 (555) 890-3344',
+        emergency_phone: '',
+        website: 'https://www.northsideurgentcare.com',
+        directions_url: 'https://maps.google.com/?q=Northside+Urgent+Care',
+        rating: 4.3,
+        review_count: 421
+      }
+    ],
+
+    diagnosticLabs: [
+      {
+        id: 'lab-org-01',
+        name: 'Metro Health Diagnostic Center',
+        address: '450 Health Avenue, Suite 100',
+        city: 'Metropolis',
+        postal_code: '10001',
+        available_tests: ['Complete Blood Count (CBC)', 'Comprehensive Metabolic Panel', 'Lipid Profile', 'HbA1c', 'Thyroid TSH', 'Vitamin D', 'Urinalysis'],
+        home_sample_collection: true,
+        accreditations: ['CAP Accredited', 'CLIA Certified'],
+        operating_hours: 'Mon - Sat: 7:00 AM - 7:00 PM | Sun: 8:00 AM - 2:00 PM',
+        contact_phone: '+1 (555) 234-5670',
+        contact_email: 'appointments@metrodiagnostic.org',
+        booking_url: 'https://www.metrodiagnostic.org/book-test'
+      },
+      {
+        id: 'lab-org-02',
+        name: 'Apex Clinical Pathology & Molecular Lab',
+        address: '780 Research Drive, Biotech Park',
+        city: 'Metropolis',
+        postal_code: '10002',
+        available_tests: ['Genetic Panels', 'PCR Molecular Testing', 'Hormone Panels', 'Allergy Screen', 'Cancer Biomarkers'],
+        home_sample_collection: true,
+        accreditations: ['CAP Accredited', 'NABL Accredited', 'ISO 15189'],
+        operating_hours: '24/7 Operations for Sample Processing',
+        contact_phone: '+1 (555) 987-1234',
+        contact_email: 'support@apexclinicallab.com',
+        booking_url: 'https://www.apexclinicallab.com/schedule'
+      },
+      {
+        id: 'lab-org-03',
+        name: 'QuestLine Diagnostic Imaging & Lab',
+        address: '210 Commercial St',
+        city: 'Metropolis',
+        postal_code: '10003',
+        available_tests: ['Routine Blood Work', 'Digital X-Ray', 'Ultrasound Imaging', 'ECG / EKG', 'Lipid Panel'],
+        home_sample_collection: false,
+        accreditations: ['CLIA Certified', 'ACR Accredited Imaging'],
+        operating_hours: 'Mon - Fri: 7:30 AM - 5:30 PM | Sat: 8:00 AM - 1:00 PM',
+        contact_phone: '+1 (555) 456-7899',
+        contact_email: 'info@questlinediagnostics.com',
+        booking_url: 'https://www.questlinediagnostics.com'
+      },
+      {
+        id: 'lab-org-04',
+        name: 'PureHealth Home Phlebotomy Services',
+        address: '55 Mobile Care Way',
+        city: 'Metropolis',
+        postal_code: '10004',
+        available_tests: ['Fasting Glucose', 'HbA1c', 'Lipid Panel', 'CBC', 'Vitamin D & B12', 'Kidney Function Panel'],
+        home_sample_collection: true,
+        accreditations: ['CLIA Certified Phlebotomy Network'],
+        operating_hours: 'Mon - Sun: 6:00 AM - 12:00 PM (Home visits)',
+        contact_phone: '+1 (555) 890-4433',
+        contact_email: 'care@purehealthhome.com',
+        booking_url: 'https://www.purehealthhome.com/book'
+      },
+      {
+        id: 'lab-org-05',
+        name: 'Sunlight Pathology & Specialty Endocrinology Lab',
+        address: '304 Sunlight Tower',
+        city: 'Metropolis',
+        postal_code: '10005',
+        available_tests: ['Thyroid Antibodies', 'Free T3/T4', 'Cortisol', 'Insulin Fasting', 'Testosterone / Estrogen', 'DHEA-S'],
+        home_sample_collection: false,
+        accreditations: ['CAP Accredited', 'CLIA Certified'],
+        operating_hours: 'Mon - Fri: 8:00 AM - 5:00 PM',
+        contact_phone: '+1 (555) 678-9012',
+        contact_email: 'service@sunlightpathology.com',
+        booking_url: 'https://www.sunlightpathology.com'
+      },
+      {
+        id: 'lab-org-06',
+        name: 'RapidCare Point-of-Care Diagnostics',
+        address: '90 Express Lane',
+        city: 'Metropolis',
+        postal_code: '10006',
+        available_tests: ['Rapid Strep', 'Influenza A/B', 'COVID-19 Antigen & PCR', 'Urine Dipstick', 'Fingerstick Glucose & HbA1c'],
+        home_sample_collection: false,
+        accreditations: ['CLIA Waived & Moderate Complexity Certified'],
+        operating_hours: 'Mon - Sun: 8:00 AM - 9:00 PM',
+        contact_phone: '+1 (555) 345-6789',
+        contact_email: 'frontdesk@rapidcaredx.com',
+        booking_url: 'https://www.rapidcaredx.com'
+      }
+    ],
+
+    timelineEvents: [
+      {
+        id: 'tl-01',
+        user_id: demoUserId,
+        event_type: 'daily_report',
+        title: 'Daily Health Log Recorded',
+        description: 'Sleep: 7.5 hrs, Energy: 4/5, Vitals stable (BP 118/76, HR 68). Prior headache symptoms resolved.',
+        reference_id: 'dhr-demo-01',
+        date: '2026-09-16',
+        created_at: '2026-09-16T08:30:00Z'
+      },
+      {
+        id: 'tl-02',
+        user_id: demoUserId,
+        event_type: 'symptom',
+        title: 'Symptom Check: Tension Headache & Fatigue',
+        description: 'Reported 3-day mild tension headache and eye strain after long screen sessions. Conservative routine guidance provided.',
+        reference_id: 'symp-demo-01',
+        date: '2026-09-14',
+        created_at: '2026-09-14T15:20:00Z'
+      },
+      {
+        id: 'tl-03',
+        user_id: demoUserId,
+        event_type: 'lab_report',
+        title: 'Lab Report Analyzed: Metabolic & Lipid Profile',
+        description: 'Metro Health Diagnostic Center: 8 markers analyzed. Total Cholesterol (215 mg/dL) and Vitamin D (22.4 ng/mL) flagged for routine discussion.',
+        reference_id: 'lab-demo-01',
+        date: '2026-09-10',
+        created_at: '2026-09-10T16:00:00Z'
+      },
+      {
+        id: 'tl-04',
+        user_id: demoUserId,
+        event_type: 'appointment',
+        title: 'Consultation: Dr. Evelyn Vance (Primary Care)',
+        description: 'Routine annual preventive consultation and review of past blood work. Recommended maintaining hydration and repeating lipid panel in 6 months.',
+        date: '2026-07-15',
+        created_at: '2026-07-15T11:00:00Z'
+      },
+      {
+        id: 'tl-05',
+        user_id: demoUserId,
+        event_type: 'lab_report',
+        title: 'Lab Report Analyzed: Complete Blood Count (CBC)',
+        description: 'Apex Clinical Laboratories: Hemoglobin 13.4 g/dL, WBC 6.8, Platelets 265. All markers within reference ranges.',
+        reference_id: 'lab-demo-02',
+        date: '2026-06-18',
+        created_at: '2026-06-18T14:10:00Z'
+      }
+    ],
+
+    aiConversations: [
+      {
+        id: 'conv-demo-01',
+        user_id: demoUserId,
+        title: 'Questions about Vitamin D & Cholesterol',
+        messages: [
+          {
+            role: 'user',
+            content: 'What does it mean when 25-Hydroxy Vitamin D is around 22 ng/mL?',
+            timestamp: '2026-09-11T10:15:00Z',
+            safety_evaluated: true
+          },
+          {
+            role: 'assistant',
+            content: 'In standard laboratory reference intervals, 25-Hydroxy Vitamin D levels between 20 and 29 ng/mL are typically classified as "insufficient" (with 30 to 100 ng/mL regarded as sufficient by many clinical societies).\n\nVitamin D is essential for intestinal calcium absorption, bone remodeling, and healthy immune modulation. Common non-disease contributors to insufficient levels include limited direct sunlight exposure, living in northern latitudes, indoor work environments, or low dietary intake of fortified foods or fatty fish.\n\nSuggested next step: Consider speaking with your physician or healthcare provider. They can determine whether supplemental Vitamin D3 is appropriate for your individual health context, suggest an effective dosage, and recommend when to recheck your levels.\n\n*Note: This explanation is educational and is not a medical diagnosis or prescription.*',
+            timestamp: '2026-09-11T10:15:04Z',
+            safety_evaluated: true
+          }
+        ],
+        updated_at: '2026-09-11T10:15:04Z',
+        created_at: '2026-09-11T10:15:00Z'
+      }
+    ],
+
+    appointments: []
+  };
+
+  db.resetData(seededData);
+  console.log('Fictional demo data successfully seeded!');
+}
+
+// Run if called directly
+if (process.argv[1]?.endsWith('seed.ts')) {
+  seedDatabase().then(() => process.exit(0)).catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}

@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+client/dist/
+server/dist/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+client/.env
+client/.env.*
+!client/.env.example
+server/.env
+
+# Runtime uploads and logs
+server/uploads/
+*.log
+npm-debug.log*
+
+# Local database changes
+server/data/*.json
+!server/data/medscan_db.json
